@@ -70,17 +70,20 @@ class _TeamGamesState extends State<TeamGames> {
                   ),
                 ),
                 onTap: () => {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return GameDetailsPage(
-                          gameId: game.id,
-                          year: game.season,
-                        );
-                      },
-                    ),
-                  ),
+                  if (game.homePoints != null)
+                    {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return GameDetailsPage(
+                              gameId: game.id,
+                              year: game.season,
+                            );
+                          },
+                        ),
+                      )
+                    },
                 },
               );
             },
