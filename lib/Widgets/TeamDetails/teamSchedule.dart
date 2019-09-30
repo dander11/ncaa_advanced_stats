@@ -61,16 +61,19 @@ class _TeamGamesState extends State<TeamGames> {
               return ListTile(
                 title: Text(
                     "${game.homeTeam} ${game.homePoints ?? ''} at ${game.awayTeam} ${game.awayPoints ?? ''}"),
-                trailing: game.homePoints != null
-                    ? Icon(Icons.keyboard_arrow_right)
-                    : null,
+                trailing:
+                    //game.homePoints != null
+                    //  ? Icon(Icons.keyboard_arrow_right)
+                    //:
+                    null,
                 subtitle: Text(
                   DateFormat.yMMMd().format(
                     DateTime.parse(game.startDate),
                   ),
                 ),
                 onTap: () => {
-                  if (game.homePoints != null)
+                  //removing this feature in the dirtiest way possible for now
+                  if (false)
                     {
                       Navigator.push(
                         context,
