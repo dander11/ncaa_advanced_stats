@@ -1,31 +1,42 @@
-import 'dart:math';
-
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:ncaa_stats/Blocs/statsBloc.dart';
-import 'package:ncaa_stats/Models/gameFilter.dart';
 import 'package:ncaa_stats/Models/spFilter.dart';
 import 'package:ncaa_stats/Models/spRatings.dart';
 import 'package:ncaa_stats/Widgets/InheritedBlocs.dart';
 import 'package:ncaa_stats/Widgets/TeamDetails/teamDetailsPage.dart';
 import 'package:queries/collections.dart';
-import 'Models/game.dart';
 import 'Models/team.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+  static FirebaseAnalytics analytics = FirebaseAnalytics();
+  static FirebaseAnalyticsObserver observer =
+      FirebaseAnalyticsObserver(analytics: analytics);
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    analytics.logAppOpen();
     return InheritedBlocs(
+      analytics: analytics,
+      observer: observer,
       statsBloc: StatsBloc(),
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
           primarySwatch: Colors.blue,
+          primaryColor: Colors.white,
+          appBarTheme: AppBarTheme(
+            color: Colors.white,
+          ),
         ),
         home: MyHomePage(title: 'NCAA Advanced Stats'),
+        navigatorObservers: [
+          observer,
+        ],
       ),
     );
   }
@@ -52,6 +63,24 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           title: Text(widget.title),
           bottom: TabBar(
+            onTap: (index) {
+              var pageName = "";
+              switch (index) {
+                case 0:
+                  pageName = "Conferences";
+                  break;
+                case 1:
+                  pageName = "Standings";
+
+                  break;
+                default:
+              }
+              InheritedBlocs.of(context)
+                  .analytics
+                  .logEvent(name: "viewed_page", parameters: {
+                "page_name": pageName,
+              });
+            },
             tabs: <Widget>[
               Tab(
                 text: "Conferences",
@@ -171,6 +200,10 @@ class _StandingsWidgetState extends State<StandingsWidget> {
                   rating.rating.toStringAsFixed(3),
                 ),
                 onTap: () {
+                  InheritedBlocs.of(context)
+                      .statsBloc
+                      .teamRatingFilter
+                      .add(SpFilter(team: rating.team));
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
                     var team = InheritedBlocs.of(context)
                         .teams
@@ -201,6 +234,13 @@ class ConferenceTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
+      onExpansionChanged: (opened) {
+        if (opened) {
+          InheritedBlocs.of(context)
+              .analytics
+              .logViewItemList(itemCategory: this.conference);
+        }
+      },
       title: (Text(conference == null || conference.isEmpty
           ? "Independant"
           : conference)),
@@ -211,10 +251,19 @@ class ConferenceTile extends StatelessWidget {
             title: Text(team.school),
             subtitle:
                 Text(team.conference == null ? "Independant" : team.conference),
-            onTap: () => {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return new TeamDetailPage(team: team);
-              }))
+            onTap: () {
+              InheritedBlocs.of(context)
+                  .statsBloc
+                  .teamRatingFilter
+                  .add(SpFilter(team: team.school));
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) {
+                      return new TeamDetailPage(team: team);
+                    },
+                    settings: RouteSettings(name: "teams/${team.school}")),
+              );
             },
           ),
       ],

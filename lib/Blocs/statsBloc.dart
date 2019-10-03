@@ -16,7 +16,7 @@ class StatsBloc {
   Stream<List<Team>> get teams => _teams.stream;
   final _teams = BehaviorSubject<List<Team>>.seeded([]);
 
-  ICollegeFootballStats _api = CollegeFootballStats();
+  ICollegeFootballStats api = CollegeFootballStats();
 
   Stream<List<Game>> get games => _games.stream;
   final _games = BehaviorSubject<List<Game>>.seeded([]);
@@ -38,32 +38,16 @@ class StatsBloc {
 
   StatsBloc() {
     refreshTeams();
-    _gameFilterController.stream.listen((filter) {
-      _api.getGames(filter).then((gamesList) {
-        _games.add(gamesList);
-      });
-    });
-
-    _gameStatsFilterController.stream.listen((filter) {
-      _api.getGamePlayerStats(filter).then((gameStats) {
-        _gameStats.add(gameStats);
-      });
-    });
-
-    _teamRatingFilterController.stream.listen((filter) {
-      _api.getTeamRating(filter.team, filter.year).then((ratings) {
-        _teamRating.add(ratings);
-      });
-    });
+    initListeners();
   }
 
   updatePage() {}
 
   refreshTeams() async {
-    await _api.getTeams().then((onValue) => _teams.add(onValue));
+    await api.getTeams().then((onValue) => _teams.add(onValue));
   }
 
-  dispose() {
+  dispose() async {
     _teams.close();
     _gameFilterController.close();
     _games.close();
@@ -71,5 +55,25 @@ class StatsBloc {
     _gameStatsFilterController.close();
     _teamRating.close();
     _teamRatingFilterController.close();
+  }
+
+  void initListeners() {
+    _gameFilterController.stream.listen((filter) {
+      api.getGames(filter).then((gamesList) {
+        _games.add(gamesList);
+      });
+    });
+
+    _gameStatsFilterController.stream.listen((filter) {
+      api.getGamePlayerStats(filter).then((gameStats) {
+        _gameStats.add(gameStats);
+      });
+    });
+
+    _teamRatingFilterController.stream.listen((filter) {
+      api.getTeamRating(filter.team, filter.year).then((ratings) {
+        _teamRating.add(ratings);
+      });
+    });
   }
 }

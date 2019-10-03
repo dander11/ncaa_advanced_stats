@@ -3,6 +3,7 @@ import 'package:ncaa_stats/Models/spFilter.dart';
 import 'package:ncaa_stats/Models/spRatings.dart';
 import 'package:ncaa_stats/Models/team.dart';
 import 'package:ncaa_stats/Widgets/InheritedBlocs.dart';
+import 'package:queries/collections.dart';
 
 class TeamRatings extends StatefulWidget {
   final Team team;
@@ -21,30 +22,30 @@ class _TeamRatingsState extends State<TeamRatings> {
   _TeamRatingsState({this.team, this.year});
   @override
   Widget build(BuildContext context) {
-    InheritedBlocs.of(context)
-        .statsBloc
-        .teamRatingFilter
-        .add(SpFilter(team: this.team.school, year: this.year));
     return StreamBuilder<List<SpRatings>>(
         stream: InheritedBlocs.of(context).statsBloc.teamRating,
         builder: (context, snapshot) {
-          if (!snapshot.hasData ||
-              snapshot.data.where((sp) => sp.team == this.team.school).length >
-                  1) {
+          if (!snapshot.hasData) {
             InheritedBlocs.of(context)
                 .statsBloc
                 .teamRatingFilter
-                .add(SpFilter(team: this.team.school, year: this.year));
+                .add(SpFilter(team: this.team.school));
             return Center(
               child: CircularProgressIndicator(),
             );
           }
-          var teamRating = snapshot.data
-              .firstWhere((rating) => rating.team == this.widget.team.school);
-          var averageRating = snapshot.data
-              .firstWhere((rating) => rating.team != this.widget.team.school);
+          var teamRating = snapshot.data.firstWhere((rating) =>
+              rating.team == this.widget.team.school &&
+              rating.year == this.year);
+          var averageRating = snapshot.data.firstWhere((rating) =>
+              rating.team != this.widget.team.school &&
+              rating.year == this.year);
           var ratingColor = Colors.white;
-          var years = [for (var i = 1972; i <= DateTime.now().year; i += 1) i];
+          List<int> years = Collection(snapshot.data)
+              .where((rating) => rating.team == this.widget.team.school)
+              .select((rating) => rating.year)
+              .distinct()
+              .toList();
           var cardElevation = 0.0;
           return ListView(
             children: <Widget>[
@@ -131,8 +132,10 @@ class _TeamRatingsState extends State<TeamRatings> {
                         ratingTitle: "Special Teams Rating",
                         ratingStirng:
                             teamRating.specialTeams.rating?.toStringAsFixed(4),
-                        nationalAverageRating: averageRating.specialTeams.rating
-                            .toStringAsFixed(4),
+                        nationalAverageRating:
+                            averageRating.specialTeams.rating.toString() ??
+                                averageRating.specialTeams.rating
+                                    .toStringAsFixed(4),
                       ),
                     ],
                   ),

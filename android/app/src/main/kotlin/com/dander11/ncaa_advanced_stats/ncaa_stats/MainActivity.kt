@@ -1,4 +1,4 @@
-package com.dander11.ncaa_advanced_stats
+package com.dander11.ncaa_advanced_stats.ncaa_stats
 
 import android.os.Bundle
 

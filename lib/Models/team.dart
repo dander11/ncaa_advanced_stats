@@ -17,6 +17,7 @@ class Team {
   String color;
   String altColor;
   List<String> logos;
+  List<int> years;
 
   Team({
     this.id,
@@ -31,6 +32,7 @@ class Team {
     this.color,
     this.altColor,
     this.logos,
+    this.years,
   });
 
   factory Team.fromRawJson(String str) => Team.fromJson(json.decode(str));

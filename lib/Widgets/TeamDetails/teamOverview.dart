@@ -33,10 +33,6 @@ class _TeamOverviewState extends State<TeamOverview> {
 
   @override
   Widget build(BuildContext context) {
-    InheritedBlocs.of(context)
-        .statsBloc
-        .teamRatingFilter
-        .add(SpFilter(team: this.widget.team.school));
     return TeamItemCard(
       child: Padding(
         padding: const EdgeInsets.all(10.0),
@@ -126,23 +122,31 @@ class _TeamOverviewState extends State<TeamOverview> {
                           ),
                           FractionallySizedBox(
                             widthFactor: 1,
-                            child: AspectRatio(
-                              aspectRatio: 4 / 3,
-                              child: TeamGraph(
-                                controller: _controller,
-                                teamColor: teamColor,
-                                team: widget.team,
-                                startYear: snapshot.data.first.year,
-                                teamRatings: ratingCollection
-                                    .where(
-                                        (sp) => sp.team == widget.team.school)
-                                    .select((rating) => rating.rating)
-                                    .toList(),
-                                avgRatings: ratingCollection
-                                    .where(
-                                        (sp) => sp.team != widget.team.school)
-                                    .select((rating) => rating.rating)
-                                    .toList(),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 40.0),
+                              child: AspectRatio(
+                                aspectRatio: 4 / 3,
+                                child: TeamGraph(
+                                  controller: _controller,
+                                  teamColor: teamColor,
+                                  years: ratingCollection
+                                      .where(
+                                          (sp) => sp.team == widget.team.school)
+                                      .select((rating) => rating.year)
+                                      .toList(),
+                                  team: widget.team,
+                                  teamRatings: ratingCollection
+                                      .where(
+                                          (sp) => sp.team == widget.team.school)
+                                      .select((rating) => rating.rating)
+                                      .toList(),
+                                  avgRatings: ratingCollection
+                                      .where(
+                                          (sp) => sp.team != widget.team.school)
+                                      .select((rating) => rating.rating)
+                                      .toList(),
+                                ),
                               ),
                             ),
                           ),
@@ -155,24 +159,34 @@ class _TeamOverviewState extends State<TeamOverview> {
                           ),
                           FractionallySizedBox(
                             widthFactor: 1,
-                            child: AspectRatio(
-                                aspectRatio: 4 / 3,
-                                child: TeamGraph(
-                                  controller: _controller,
-                                  teamColor: teamColor,
-                                  team: widget.team,
-                                  startYear: snapshot.data.first.year,
-                                  teamRatings: ratingCollection
-                                      .where(
-                                          (sp) => sp.team == widget.team.school)
-                                      .select((rating) => rating.offense.rating)
-                                      .toList(),
-                                  avgRatings: ratingCollection
-                                      .where(
-                                          (sp) => sp.team != widget.team.school)
-                                      .select((rating) => rating.offense.rating)
-                                      .toList(),
-                                )),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 40.0),
+                              child: AspectRatio(
+                                  aspectRatio: 4 / 3,
+                                  child: TeamGraph(
+                                    controller: _controller,
+                                    teamColor: teamColor,
+                                    team: widget.team,
+                                    years: ratingCollection
+                                        .where((sp) =>
+                                            sp.team == widget.team.school)
+                                        .select((rating) => rating.year)
+                                        .toList(),
+                                    teamRatings: ratingCollection
+                                        .where((sp) =>
+                                            sp.team == widget.team.school)
+                                        .select(
+                                            (rating) => rating.offense.rating)
+                                        .toList(),
+                                    avgRatings: ratingCollection
+                                        .where((sp) =>
+                                            sp.team != widget.team.school)
+                                        .select(
+                                            (rating) => rating.offense.rating)
+                                        .toList(),
+                                  )),
+                            ),
                           ),
                           Divider(
                             height: 30.0,
@@ -183,23 +197,31 @@ class _TeamOverviewState extends State<TeamOverview> {
                           ),
                           FractionallySizedBox(
                             widthFactor: 1,
-                            child: AspectRatio(
-                              aspectRatio: 4 / 3,
-                              child: TeamGraph(
-                                controller: _controller,
-                                teamColor: teamColor,
-                                team: widget.team,
-                                startYear: snapshot.data.first.year,
-                                teamRatings: ratingCollection
-                                    .where(
-                                        (sp) => sp.team == widget.team.school)
-                                    .select((rating) => rating.defense.rating)
-                                    .toList(),
-                                avgRatings: ratingCollection
-                                    .where(
-                                        (sp) => sp.team != widget.team.school)
-                                    .select((rating) => rating.defense.rating)
-                                    .toList(),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 40.0),
+                              child: AspectRatio(
+                                aspectRatio: 4 / 3,
+                                child: TeamGraph(
+                                  controller: _controller,
+                                  teamColor: teamColor,
+                                  team: widget.team,
+                                  years: ratingCollection
+                                      .where(
+                                          (sp) => sp.team == widget.team.school)
+                                      .select((rating) => rating.year)
+                                      .toList(),
+                                  teamRatings: ratingCollection
+                                      .where(
+                                          (sp) => sp.team == widget.team.school)
+                                      .select((rating) => rating.defense.rating)
+                                      .toList(),
+                                  avgRatings: ratingCollection
+                                      .where(
+                                          (sp) => sp.team != widget.team.school)
+                                      .select((rating) => rating.defense.rating)
+                                      .toList(),
+                                ),
                               ),
                             ),
                           ),
@@ -258,7 +280,7 @@ class TeamGraph extends StatelessWidget {
     @required this.team,
     @required this.teamRatings,
     @required this.avgRatings,
-    @required this.startYear,
+    @required this.years,
   })  : _controller = controller,
         super(key: key);
 
@@ -267,7 +289,7 @@ class TeamGraph extends StatelessWidget {
   final Team team;
   final List<double> teamRatings;
   final List<double> avgRatings;
-  final int startYear;
+  final List<int> years;
 
   @override
   Widget build(BuildContext context) {
@@ -286,8 +308,9 @@ class TeamGraph extends StatelessWidget {
                         return null;
                       }
                       var touchedLineSpot = touchedSpot as LineTouchedSpot;
+                      var teamName = team.abbreviation ?? team.school;
                       String text =
-                          "${touchedLineSpot.barData.colors.any((c) => c == teamColor) ? team.school : "Avg."} ${touchedSpot.spot.y.toStringAsFixed(2)}";
+                          "${touchedLineSpot.barData.colors.any((c) => c == teamColor) ? teamName : "Avg."} ${touchedSpot.spot.y.toStringAsFixed(2)}";
                       if (touchedSpots.first == touchedSpot) {
                         text =
                             "${touchedSpot.spot.x.toInt().toString()}\n${text}";
@@ -316,9 +339,9 @@ class TeamGraph extends StatelessWidget {
               margin: 10,
               getTitles: (value) {
                 var yearSeperation = 1.0;
-                if (DateTime.now().year - startYear > 20) {
+                if (years.last - years.first > 25) {
                   yearSeperation = 10.0;
-                } else if (DateTime.now().year - startYear > 10) {
+                } else if (years.last - years.first > 10) {
                   yearSeperation = 5.0;
                 } else {
                   yearSeperation = 1.0;
@@ -329,7 +352,7 @@ class TeamGraph extends StatelessWidget {
               },
             ),
             leftTitles: SideTitles(
-              showTitles: true,
+              showTitles: false,
               textStyle: TextStyle(
                 color: Color(0xff75729e),
                 fontWeight: FontWeight.bold,
@@ -370,8 +393,8 @@ class TeamGraph extends StatelessWidget {
                   color: Colors.transparent,
                 ),
               )),
-          minX: startYear.toDouble(),
-          maxX: DateTime.now().year.toDouble(),
+          minX: years.first.toDouble(),
+          maxX: years.last.toDouble(),
           maxY: Collection(teamRatings).max() > Collection(avgRatings).max()
               ? Collection(teamRatings).max() + 1
               : Collection(avgRatings).max() + 1,
@@ -382,8 +405,8 @@ class TeamGraph extends StatelessWidget {
             LineChartBarData(
               spots: teamRatings
                   .asMap()
-                  .map((index, value) => MapEntry(index,
-                      FlSpot((this.startYear + index).toDouble(), value)))
+                  .map((index, value) => MapEntry(
+                      index, FlSpot((this.years[index]).toDouble(), value)))
                   .values
                   .toList(),
               isCurved: true,
@@ -402,8 +425,8 @@ class TeamGraph extends StatelessWidget {
             LineChartBarData(
               spots: avgRatings
                   .asMap()
-                  .map((index, value) => MapEntry(index,
-                      FlSpot((this.startYear + index).toDouble(), value)))
+                  .map((index, value) => MapEntry(
+                      index, FlSpot((this.years[index]).toDouble(), value)))
                   .values
                   .toList(),
               isCurved: true,

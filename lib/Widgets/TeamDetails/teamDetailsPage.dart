@@ -64,6 +64,30 @@ class TeamDetailPage extends StatelessWidget {
                       ),
                 ),
                 bottom: TabBar(
+                  onTap: (index) {
+                    var pageName = "";
+                    var index = DefaultTabController.of(context).index;
+                    switch (index) {
+                      case 0:
+                        pageName = "Overview";
+                        break;
+                      case 1:
+                        pageName = "Ratings";
+
+                        break;
+                      case 2:
+                        pageName = "Schedule";
+
+                        break;
+                      default:
+                    }
+                    InheritedBlocs.of(context)
+                        .analytics
+                        .logEvent(name: "viewed_team_page", parameters: {
+                      "team": team.school,
+                      "team_page_name": pageName,
+                    });
+                  },
                   tabs: <Widget>[
                     Tab(
                       child: Text(
@@ -97,10 +121,10 @@ class TeamDetailPage extends StatelessWidget {
           body: TabBarView(
             children: <Widget>[
               TeamOverview(team: team),
-              TeamRatings(team: team, year: 2019),
+              TeamRatings(team: team, year: DateTime.now().year),
               TeamGames(
                 team: team,
-                year: 2019,
+                year: DateTime.now().year,
               ),
             ],
           ),

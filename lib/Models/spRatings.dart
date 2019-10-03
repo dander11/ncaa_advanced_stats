@@ -14,6 +14,7 @@ class SpRatings {
   OffensiveSpRating offense;
   DefensiveSpRating defense;
   SpecialTeams specialTeams;
+
   bool get hasAdvancedRatings => (sos != null ||
       secondOrderWins != null ||
       offense.success != null ||

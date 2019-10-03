@@ -133,7 +133,7 @@ class CollegeFootballStats extends ICollegeFootballStats {
   }
 
   @override
-  Future<List<SpRatings>> getTeamRating(String school, int year) async {
+  Future<List<SpRatings>> getTeamRating(String school, [int year]) async {
     Map<String, String> filterParams = {};
     if (school != null && school.isNotEmpty) {
       filterParams["team"] = school;
