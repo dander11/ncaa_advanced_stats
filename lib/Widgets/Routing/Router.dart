@@ -11,7 +11,7 @@ Route<dynamic> generateRoute(RouteSettings settings) {
   var route = settings.name;
   var routeArgs = settings.arguments as RouteArgBase;
   if (route == Routes.HomeViewRoute) {
-    InheritedBlocs.of(routeArgs.context).statsBloc.teamRatingFilter.add(
+    InheritedBlocs.of(routeArgs.context).statsBloc.teamStandingsFilter.add(
           SpFilter(
             year: DateTime.now().year,
           ),

@@ -33,8 +33,14 @@ class StatsBloc {
   Stream<List<SpRatings>> get teamRating => _teamRating.stream;
   final _teamRating = BehaviorSubject<List<SpRatings>>();
 
+  BehaviorSubject<List<SpRatings>> get teamStandings => _teamStandings;
+  final _teamStandings = BehaviorSubject<List<SpRatings>>();
+
   Sink<SpFilter> get teamRatingFilter => _teamRatingFilterController.sink;
   final _teamRatingFilterController = StreamController<SpFilter>();
+
+  Sink<SpFilter> get teamStandingsFilter => _teamStandingsFilterController.sink;
+  final _teamStandingsFilterController = StreamController<SpFilter>();
 
   StatsBloc() {
     refreshTeams();
@@ -55,6 +61,8 @@ class StatsBloc {
     _gameStatsFilterController.close();
     _teamRating.close();
     _teamRatingFilterController.close();
+    _teamStandings.close();
+    _teamStandingsFilterController.close();
   }
 
   void initListeners() {
@@ -71,9 +79,15 @@ class StatsBloc {
     });
 
     _teamRatingFilterController.stream.listen((filter) {
-      //print("Filter: ${filter.team ?? ""}, ${filter.year ?? ""}");
+      print("Filter: ${filter.team ?? ""}, ${filter.year ?? ""}");
       api.getTeamRating(filter.team, filter.year).then((ratings) {
         _teamRating.add(ratings);
+      });
+    });
+
+    _teamStandingsFilterController.stream.listen((filter) {
+      api.getTeamRating(filter.team, filter.year).then((ratings) {
+        _teamStandings.add(ratings);
       });
     });
   }
