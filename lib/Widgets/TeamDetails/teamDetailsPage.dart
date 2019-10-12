@@ -1,16 +1,6 @@
-import 'dart:async';
-
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:ncaa_stats/Models/game.dart';
-import 'package:ncaa_stats/Models/gameFilter.dart';
-import 'package:ncaa_stats/Models/spFilter.dart';
-import 'package:ncaa_stats/Models/spRatings.dart';
 import 'package:ncaa_stats/Models/team.dart';
-import 'package:ncaa_stats/Widgets/GameDetails/gameDetailsPage.dart';
 import 'package:ncaa_stats/Widgets/InheritedBlocs.dart';
-import 'package:ncaa_stats/Widgets/TeamDetails/teamItemCard.dart';
 import 'package:ncaa_stats/Widgets/TeamDetails/teamOverview.dart';
 import 'package:ncaa_stats/Widgets/TeamDetails/teamRatings.dart';
 import 'package:ncaa_stats/Widgets/TeamDetails/teamSchedule.dart';
@@ -19,9 +9,11 @@ class TeamDetailPage extends StatelessWidget {
   const TeamDetailPage({
     Key key,
     @required this.team,
+    this.schoolName,
   }) : super(key: key);
 
   final Team team;
+  final String schoolName;
 
   @override
   Widget build(BuildContext context) {

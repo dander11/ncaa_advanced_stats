@@ -5,7 +5,6 @@ import 'package:ncaa_stats/Blocs/statsBloc.dart';
 import 'package:ncaa_stats/Models/team.dart';
 
 class InheritedBlocs extends InheritedWidget {
-  List<Team> teams;
   final FirebaseAnalytics analytics;
   final FirebaseAnalyticsObserver observer;
 

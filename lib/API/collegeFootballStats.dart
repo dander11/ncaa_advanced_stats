@@ -9,12 +9,14 @@ import 'package:ncaa_stats/Models/player.dart';
 import 'package:ncaa_stats/Models/spRatings.dart';
 import 'package:ncaa_stats/Models/team.dart';
 import 'package:http/http.dart' as http;
+import 'package:queries/collections.dart';
 
 class CollegeFootballStats extends ICollegeFootballStats {
   String _apiUrl = "https://api.collegefootballdata.com";
   @override
   Future<List<Game>> getGames(GamesFilter filter) async {
     Map<String, String> filterParams = {};
+    filterParams["seasonType"] = "both";
     if (filter.away != null && filter.away.isNotEmpty) {
       filterParams["away"] = filter.away;
     }
@@ -43,7 +45,9 @@ class CollegeFootballStats extends ICollegeFootballStats {
         .map((e) => new Game.fromJson(e))
         .toList();
 
-    return games;
+    return Collection(games)
+        .orderBy((game) => DateTime.parse(game.startDate))
+        .toList();
   }
 
   @override

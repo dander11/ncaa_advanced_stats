@@ -22,10 +22,6 @@ class _GameDetailsPageState extends State<GameDetailsPage> {
   _GameDetailsPageState({this.gameId, this.year});
   @override
   Widget build(BuildContext context) {
-    InheritedBlocs.of(context)
-        .statsBloc
-        .gameStatsFilter
-        .add(GamesFilter(gameId: this.gameId, year: this.year));
     return StreamBuilder<GameStats>(
         stream: InheritedBlocs.of(context).statsBloc.gameStats,
         builder: (context, snapshot) {

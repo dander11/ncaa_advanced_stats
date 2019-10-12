@@ -13,12 +13,12 @@ class StatsBloc {
   /* Sink<AppPage> get nextPage => _nextPageController.sink;
   final _nextPageController = StreamController<AppPage>();
  */
-  Stream<List<Team>> get teams => _teams.stream;
+  BehaviorSubject<List<Team>> get teams => _teams;
   final _teams = BehaviorSubject<List<Team>>.seeded([]);
 
   ICollegeFootballStats api = CollegeFootballStats();
 
-  Stream<List<Game>> get games => _games.stream;
+  BehaviorSubject<List<Game>> get games => _games;
   final _games = BehaviorSubject<List<Game>>.seeded([]);
 
   Sink<GamesFilter> get gamesFilter => _gameFilterController.sink;
@@ -71,6 +71,7 @@ class StatsBloc {
     });
 
     _teamRatingFilterController.stream.listen((filter) {
+      //print("Filter: ${filter.team ?? ""}, ${filter.year ?? ""}");
       api.getTeamRating(filter.team, filter.year).then((ratings) {
         _teamRating.add(ratings);
       });

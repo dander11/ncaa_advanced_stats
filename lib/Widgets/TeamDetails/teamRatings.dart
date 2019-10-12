@@ -26,10 +26,6 @@ class _TeamRatingsState extends State<TeamRatings> {
         stream: InheritedBlocs.of(context).statsBloc.teamRating,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            InheritedBlocs.of(context)
-                .statsBloc
-                .teamRatingFilter
-                .add(SpFilter(team: this.team.school));
             return Center(
               child: CircularProgressIndicator(),
             );

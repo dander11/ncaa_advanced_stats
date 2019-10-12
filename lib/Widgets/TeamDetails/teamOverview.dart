@@ -89,10 +89,6 @@ class _TeamOverviewState extends State<TeamOverview> {
                                   .where((sp) => sp.team == widget.team.school)
                                   .length ==
                               1) {
-                        InheritedBlocs.of(context)
-                            .statsBloc
-                            .teamRatingFilter
-                            .add(SpFilter(team: this.widget.team.school));
                         return Center(
                           child: CircularProgressIndicator(),
                         );

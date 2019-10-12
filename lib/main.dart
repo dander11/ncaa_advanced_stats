@@ -5,26 +5,36 @@ import 'package:ncaa_stats/Blocs/statsBloc.dart';
 import 'package:ncaa_stats/Models/spFilter.dart';
 import 'package:ncaa_stats/Models/spRatings.dart';
 import 'package:ncaa_stats/Widgets/InheritedBlocs.dart';
+import 'package:ncaa_stats/Widgets/Routing/CustomRouteObserver.dart';
+import 'package:ncaa_stats/Widgets/Routing/RouteArgs/RouteArgs.dart';
+import 'package:ncaa_stats/Widgets/Routing/Router.dart';
 import 'package:ncaa_stats/Widgets/TeamDetails/teamDetailsPage.dart';
 import 'package:queries/collections.dart';
+import 'Models/gameFilter.dart';
 import 'Models/team.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  FirebaseAnalytics analytics = FirebaseAnalytics();
+  FirebaseAnalyticsObserver observer =
+      FirebaseAnalyticsObserver(analytics: analytics);
+  runApp(InheritedBlocs(
+      analytics: analytics,
+      observer: observer,
+      statsBloc: StatsBloc(),
+      child: MyApp(analytics, observer)));
+}
 
 class MyApp extends StatelessWidget {
-  static FirebaseAnalytics analytics = FirebaseAnalytics();
-  static FirebaseAnalyticsObserver observer =
-      FirebaseAnalyticsObserver(analytics: analytics);
+  final FirebaseAnalytics analytics;
+  final FirebaseAnalyticsObserver observer;
+
+  MyApp(this.analytics, this.observer);
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     analytics.logAppOpen();
-    return InheritedBlocs(
-      analytics: analytics,
-      observer: observer,
-      statsBloc: StatsBloc(),
-      child: MaterialApp(
+    return MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
           primarySwatch: Colors.blue,
@@ -33,12 +43,23 @@ class MyApp extends StatelessWidget {
             color: Colors.white,
           ),
         ),
-        home: MyHomePage(title: 'NCAA Advanced Stats'),
         navigatorObservers: [
           observer,
+          //CustomRouteObserver(),
         ],
-      ),
-    );
+        onGenerateRoute: (settings) {
+          if (settings.arguments == null ||
+              !(settings.arguments is RouteArgBase)) {
+            return generateRoute(
+              RouteSettings(
+                isInitialRoute: settings.isInitialRoute,
+                name: settings.name,
+                arguments: RouteArgBase(context),
+              ),
+            );
+          }
+          return generateRoute(settings);
+        });
   }
 }
 
@@ -54,9 +75,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    InheritedBlocs.of(context).statsBloc.teams.listen((teams) {
-      InheritedBlocs.of(context).teams = teams;
-    });
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -159,9 +177,6 @@ class _StandingsWidgetState extends State<StandingsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    InheritedBlocs.of(context).statsBloc.teamRatingFilter.add(SpFilter(
-          year: DateTime.now().year,
-        ));
     return StreamBuilder<List<SpRatings>>(
       stream: InheritedBlocs.of(context).statsBloc.teamRating,
       builder: (BuildContext context, AsyncSnapshot<List<SpRatings>> snapshot) {
@@ -177,9 +192,9 @@ class _StandingsWidgetState extends State<StandingsWidget> {
 
         return RefreshIndicator(
           onRefresh: () async {
-            InheritedBlocs.of(context).statsBloc.teamRatingFilter.add(SpFilter(
+            /* InheritedBlocs.of(context).statsBloc.teamRatingFilter.add(SpFilter(
                   year: DateTime.now().year,
-                ));
+                )); */
           },
           child: ListView.separated(
             separatorBuilder: (context, index) => Divider(
@@ -200,16 +215,19 @@ class _StandingsWidgetState extends State<StandingsWidget> {
                   rating.rating.toStringAsFixed(3),
                 ),
                 onTap: () {
-                  InheritedBlocs.of(context)
+                  var team = InheritedBlocs.of(context)
                       .statsBloc
-                      .teamRatingFilter
-                      .add(SpFilter(team: rating.team));
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    var team = InheritedBlocs.of(context)
-                        .teams
-                        .firstWhere((aTeam) => aTeam.school == rating.team);
-                    return new TeamDetailPage(team: team);
-                  }));
+                      .teams
+                      .value
+                      .firstWhere((aTeam) => aTeam.school == rating.team);
+                  Navigator.pushNamed(
+                    context,
+                    "${Routes.TeamDetailsRoute}/${team.school}",
+                    arguments: TeamDetailAruments(
+                      context,
+                      team: team,
+                    ),
+                  );
                 },
               );
             },
@@ -252,17 +270,13 @@ class ConferenceTile extends StatelessWidget {
             subtitle:
                 Text(team.conference == null ? "Independant" : team.conference),
             onTap: () {
-              InheritedBlocs.of(context)
-                  .statsBloc
-                  .teamRatingFilter
-                  .add(SpFilter(team: team.school));
-              Navigator.push(
+              Navigator.pushNamed(
                 context,
-                MaterialPageRoute(
-                    builder: (context) {
-                      return new TeamDetailPage(team: team);
-                    },
-                    settings: RouteSettings(name: "teams/${team.school}")),
+                "${Routes.TeamDetailsRoute}/${team.school}",
+                arguments: TeamDetailAruments(
+                  context,
+                  team: team,
+                ),
               );
             },
           ),
