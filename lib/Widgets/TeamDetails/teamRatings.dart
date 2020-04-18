@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:ncaa_stats/Models/spFilter.dart';
-import 'package:ncaa_stats/Models/spRatings.dart';
-import 'package:ncaa_stats/Models/team.dart';
-import 'package:ncaa_stats/Widgets/InheritedBlocs.dart';
 import 'package:queries/collections.dart';
+import '../../Models/Models.dart';
+import '../InheritedBlocs.dart';
 
 class TeamRatings extends StatefulWidget {
   final Team team;
@@ -29,6 +27,9 @@ class _TeamRatingsState extends State<TeamRatings> {
             return Center(
               child: CircularProgressIndicator(),
             );
+          }
+          if (!snapshot.data.any((rating) => rating.year == this.year)) {
+            this.year = snapshot.data.last.year;
           }
           var teamRating = snapshot.data.firstWhere((rating) =>
               rating.team == this.widget.team.school &&

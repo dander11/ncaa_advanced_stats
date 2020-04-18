@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:ncaa_stats/Models/game.dart';
-import 'package:ncaa_stats/Models/gameFilter.dart';
-import 'package:ncaa_stats/Models/team.dart';
-import 'package:ncaa_stats/Widgets/GameDetails/gameDetailsPage.dart';
-import 'package:ncaa_stats/Widgets/TeamDetails/teamItemCard.dart';
-
+import '../../Models/Models.dart';
+import '../GameDetails/gameDetailsPage.dart';
 import '../InheritedBlocs.dart';
+import 'teamItemCard.dart';
 
 class TeamGames extends StatefulWidget {
   final Team team;

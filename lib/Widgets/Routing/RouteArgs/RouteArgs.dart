@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ncaa_stats/Models/team.dart';
+import '../../../Models/Models.dart';
 
 class TeamDetailAruments extends RouteArgBase {
   final String schoolName;

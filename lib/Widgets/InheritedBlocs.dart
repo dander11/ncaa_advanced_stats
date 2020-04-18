@@ -1,8 +1,7 @@
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/widgets.dart';
-import 'package:ncaa_stats/Blocs/statsBloc.dart';
-import 'package:ncaa_stats/Models/team.dart';
+import '../Blocs/statsBloc.dart';
 
 class InheritedBlocs extends InheritedWidget {
   final FirebaseAnalytics analytics;
@@ -20,8 +19,7 @@ class InheritedBlocs extends InheritedWidget {
   final StatsBloc statsBloc;
 
   static InheritedBlocs of(BuildContext context) {
-    return (context.inheritFromWidgetOfExactType(InheritedBlocs)
-        as InheritedBlocs);
+    return context.dependOnInheritedWidgetOfExactType<InheritedBlocs>();
   }
 
   List<String> splitWordsOnPascalCase(String input) {

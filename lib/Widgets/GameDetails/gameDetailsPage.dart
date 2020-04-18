@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:ncaa_stats/Models/gameFilter.dart';
-import 'package:ncaa_stats/Models/gameStats.dart';
-import 'package:ncaa_stats/Widgets/InheritedBlocs.dart';
 import 'package:queries/collections.dart';
+import '../../Models/Models\.dart';
+import '../InheritedBlocs.dart';
 
 class GameDetailsPage extends StatefulWidget {
   final int gameId;

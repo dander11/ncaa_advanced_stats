@@ -1,13 +1,10 @@
+
+
 import 'dart:async';
-import 'package:ncaa_stats/API/collegeFootballStats.dart';
-import 'package:ncaa_stats/API/iCollegeFootballStats.dart';
-import 'package:ncaa_stats/Models/game.dart';
-import 'package:ncaa_stats/Models/gameFilter.dart';
-import 'package:ncaa_stats/Models/gameStats.dart';
-import 'package:ncaa_stats/Models/spFilter.dart';
-import 'package:ncaa_stats/Models/spRatings.dart';
-import 'package:rxdart/rxdart.dart';
-import 'package:ncaa_stats/Models/team.dart';
+import 'package:rxdart/subjects.dart';
+import '../API/ICollegeFootballStats.dart';
+import '../API/CollegeFootballStats.dart';
+import '../Models/Models\.dart';
 
 class StatsBloc {
   /* Sink<AppPage> get nextPage => _nextPageController.sink;
@@ -42,6 +39,10 @@ class StatsBloc {
   Sink<SpFilter> get teamStandingsFilter => _teamStandingsFilterController.sink;
   final _teamStandingsFilterController = StreamController<SpFilter>();
 
+
+  BehaviorSubject<Team> get currentTeam => _currentTeam;
+  final _currentTeam = BehaviorSubject<Team>();
+
   StatsBloc() {
     refreshTeams();
     initListeners();
@@ -63,6 +64,7 @@ class StatsBloc {
     _teamRatingFilterController.close();
     _teamStandings.close();
     _teamStandingsFilterController.close();
+    _currentTeam.close();
   }
 
   void initListeners() {

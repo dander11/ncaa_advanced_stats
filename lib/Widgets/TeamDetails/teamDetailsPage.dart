@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:ncaa_stats/Models/team.dart';
-import 'package:ncaa_stats/Widgets/InheritedBlocs.dart';
-import 'package:ncaa_stats/Widgets/TeamDetails/teamOverview.dart';
-import 'package:ncaa_stats/Widgets/TeamDetails/teamRatings.dart';
-import 'package:ncaa_stats/Widgets/TeamDetails/teamSchedule.dart';
+import '../../Models/Models.dart';
+import '../InheritedBlocs.dart';
+import 'teamOverview.dart';
+import 'teamRatings.dart';
+import 'teamSchedule.dart';
 
 class TeamDetailPage extends StatelessWidget {
   const TeamDetailPage({
@@ -29,7 +29,6 @@ class TeamDetailPage extends StatelessWidget {
           headerSliverBuilder: (context, a) {
             return [
               SliverAppBar(
-                centerTitle: true,
                 elevation: 0.0,
                 backgroundColor: altColor,
                 pinned: true,
@@ -38,22 +37,27 @@ class TeamDetailPage extends StatelessWidget {
                     ),
                 expandedHeight: this.getHeaderHeight(context),
                 flexibleSpace: FlexibleSpaceBar(
-                  background: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      FractionallySizedBox(
-                        child: Image.network(team.logos.first),
-                        widthFactor: .3,
+                  background: Padding(
+                    padding: EdgeInsets.symmetric(
+                        vertical: this.getHeaderHeight(context) * .1),
+                    child: SizedBox(
+                      child: Center(
+                        child: Image.network(
+                          team.logos.first,
+                        ),
                       ),
-                    ],
+                    ),
                   ),
+                  centerTitle: true,
                 ),
+                centerTitle: true,
                 title: Text(
                   team.school,
-                  style: Theme.of(context).textTheme.title.copyWith(
-                        color: this.getTextColor(altColor),
-                      ),
+                  textAlign: TextAlign.start,
+                  style: Theme.of(context)
+                      .textTheme
+                      .title
+                      .copyWith(color: this.getTextColor(altColor)),
                 ),
                 bottom: TabBar(
                   onTap: (index) {
@@ -140,7 +144,7 @@ class TeamDetailPage extends StatelessWidget {
     return Color.fromARGB(color.alpha, d, d, d);
   }
 
-  getHeaderHeight(BuildContext context) {
+  double getHeaderHeight(BuildContext context) {
     var deviceHeight = MediaQuery.of(context).size.height;
     double headerHeight = 200.0;
     double headerPercentage = .35;

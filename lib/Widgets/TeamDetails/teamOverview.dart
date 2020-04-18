@@ -2,12 +2,11 @@ import 'dart:async';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:ncaa_stats/Models/spFilter.dart';
-import 'package:ncaa_stats/Models/spRatings.dart';
-import 'package:ncaa_stats/Models/team.dart';
-import 'package:ncaa_stats/Widgets/InheritedBlocs.dart';
-import 'package:ncaa_stats/Widgets/TeamDetails/teamItemCard.dart';
+import '../../Models/Models.dart';
+import '../InheritedBlocs.dart';
 import 'package:queries/collections.dart';
+
+import 'teamItemCard.dart';
 
 class TeamOverview extends StatefulWidget {
   const TeamOverview({
@@ -23,6 +22,13 @@ class TeamOverview extends StatefulWidget {
 
 class _TeamOverviewState extends State<TeamOverview> {
   StreamController<LineTouchResponse> _controller;
+
+  @override
+  void dispose() {
+    _controller.close();
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -110,39 +116,37 @@ class _TeamOverviewState extends State<TeamOverview> {
 
                       var ratingCollection = Collection(snapshot.data);
 
-                      return Column(
+                      return Flex(
+                        direction: Axis.vertical,
                         children: <Widget>[
                           Text(
                             "SP+ Rating vs National Avg.",
                             style: Theme.of(context).textTheme.headline,
                           ),
-                          FractionallySizedBox(
-                            widthFactor: 1,
+                          AspectRatio(
+                            aspectRatio: 4 / 3,
                             child: Padding(
                               padding:
-                                  const EdgeInsets.symmetric(horizontal: 40.0),
-                              child: AspectRatio(
-                                aspectRatio: 4 / 3,
-                                child: TeamGraph(
-                                  controller: _controller,
-                                  teamColor: teamColor,
-                                  years: ratingCollection
-                                      .where(
-                                          (sp) => sp.team == widget.team.school)
-                                      .select((rating) => rating.year)
-                                      .toList(),
-                                  team: widget.team,
-                                  teamRatings: ratingCollection
-                                      .where(
-                                          (sp) => sp.team == widget.team.school)
-                                      .select((rating) => rating.rating)
-                                      .toList(),
-                                  avgRatings: ratingCollection
-                                      .where(
-                                          (sp) => sp.team != widget.team.school)
-                                      .select((rating) => rating.rating)
-                                      .toList(),
-                                ),
+                                  const EdgeInsets.symmetric(horizontal: 30.0),
+                              child: TeamGraph(
+                                controller: _controller,
+                                teamColor: teamColor,
+                                years: ratingCollection
+                                    .where(
+                                        (sp) => sp.team == widget.team.school)
+                                    .select((rating) => rating.year)
+                                    .toList(),
+                                team: widget.team,
+                                teamRatings: ratingCollection
+                                    .where(
+                                        (sp) => sp.team == widget.team.school)
+                                    .select((rating) => rating.rating)
+                                    .toList(),
+                                avgRatings: ratingCollection
+                                    .where(
+                                        (sp) => sp.team != widget.team.school)
+                                    .select((rating) => rating.rating)
+                                    .toList(),
                               ),
                             ),
                           ),
@@ -153,37 +157,28 @@ class _TeamOverviewState extends State<TeamOverview> {
                             "SP+ Off. Rating vs National Avg.",
                             style: Theme.of(context).textTheme.headline,
                           ),
-                          FractionallySizedBox(
-                            widthFactor: 1,
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 40.0),
-                              child: AspectRatio(
-                                  aspectRatio: 4 / 3,
-                                  child: TeamGraph(
-                                    controller: _controller,
-                                    teamColor: teamColor,
-                                    team: widget.team,
-                                    years: ratingCollection
-                                        .where((sp) =>
-                                            sp.team == widget.team.school)
-                                        .select((rating) => rating.year)
-                                        .toList(),
-                                    teamRatings: ratingCollection
-                                        .where((sp) =>
-                                            sp.team == widget.team.school)
-                                        .select(
-                                            (rating) => rating.offense.rating)
-                                        .toList(),
-                                    avgRatings: ratingCollection
-                                        .where((sp) =>
-                                            sp.team != widget.team.school)
-                                        .select(
-                                            (rating) => rating.offense.rating)
-                                        .toList(),
-                                  )),
-                            ),
-                          ),
+                          AspectRatio(
+                              aspectRatio: 4 / 3,
+                              child: TeamGraph(
+                                controller: _controller,
+                                teamColor: teamColor,
+                                team: widget.team,
+                                years: ratingCollection
+                                    .where(
+                                        (sp) => sp.team == widget.team.school)
+                                    .select((rating) => rating.year)
+                                    .toList(),
+                                teamRatings: ratingCollection
+                                    .where(
+                                        (sp) => sp.team == widget.team.school)
+                                    .select((rating) => rating.offense.rating)
+                                    .toList(),
+                                avgRatings: ratingCollection
+                                    .where(
+                                        (sp) => sp.team != widget.team.school)
+                                    .select((rating) => rating.offense.rating)
+                                    .toList(),
+                              )),
                           Divider(
                             height: 30.0,
                           ),
@@ -191,42 +186,29 @@ class _TeamOverviewState extends State<TeamOverview> {
                             "SP+ Def Rating vs National Avg.",
                             style: Theme.of(context).textTheme.headline,
                           ),
-                          FractionallySizedBox(
-                            widthFactor: 1,
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 40.0),
-                              child: AspectRatio(
-                                aspectRatio: 4 / 3,
-                                child: TeamGraph(
-                                  controller: _controller,
-                                  teamColor: teamColor,
-                                  team: widget.team,
-                                  years: ratingCollection
-                                      .where(
-                                          (sp) => sp.team == widget.team.school)
-                                      .select((rating) => rating.year)
-                                      .toList(),
-                                  teamRatings: ratingCollection
-                                      .where(
-                                          (sp) => sp.team == widget.team.school)
-                                      .select((rating) => rating.defense.rating)
-                                      .toList(),
-                                  avgRatings: ratingCollection
-                                      .where(
-                                          (sp) => sp.team != widget.team.school)
-                                      .select((rating) => rating.defense.rating)
-                                      .toList(),
-                                ),
-                              ),
+                          AspectRatio(
+                            aspectRatio: 4 / 3,
+                            child: TeamGraph(
+                              controller: _controller,
+                              teamColor: teamColor,
+                              team: widget.team,
+                              years: ratingCollection
+                                  .where((sp) => sp.team == widget.team.school)
+                                  .select((rating) => rating.year)
+                                  .toList(),
+                              teamRatings: ratingCollection
+                                  .where((sp) => sp.team == widget.team.school)
+                                  .select((rating) => rating.defense.rating)
+                                  .toList(),
+                              avgRatings: ratingCollection
+                                  .where((sp) => sp.team != widget.team.school)
+                                  .select((rating) => rating.defense.rating)
+                                  .toList(),
                             ),
                           ),
                         ],
                       );
                     }),
-                Column(
-                  children: <Widget>[],
-                ),
               ],
             ),
           ],
@@ -290,156 +272,155 @@ class TeamGraph extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool markedZero = false;
-    return FlChart(
-      chart: LineChart(
-        LineChartData(
-          lineTouchData: LineTouchData(
-              touchResponseSink: _controller.sink,
-              touchTooltipData: TouchTooltipData(
-                  tooltipBgColor: Colors.white.withOpacity(1.0),
-                  getTooltipItems: (touchedSpots) {
-                    var toolTipItems =
-                        touchedSpots.map((TouchedSpot touchedSpot) {
-                      if (touchedSpots == null || touchedSpot.spot == null) {
-                        return null;
-                      }
-                      var touchedLineSpot = touchedSpot as LineTouchedSpot;
-                      var teamName = team.abbreviation ?? team.school;
-                      String text =
-                          "${touchedLineSpot.barData.colors.any((c) => c == teamColor) ? teamName : "Avg."} ${touchedSpot.spot.y.toStringAsFixed(2)}";
-                      if (touchedSpots.first == touchedSpot) {
-                        text =
-                            "${touchedSpot.spot.x.toInt().toString()}\n${text}";
-                      }
-                      final TextStyle textStyle = TextStyle(
-                        color: touchedSpot.getColor(),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                      );
-                      return TooltipItem(text, textStyle);
-                    }).toList();
-                    return toolTipItems;
-                  })),
-          gridData: FlGridData(
-            show: false,
-          ),
-          titlesData: FlTitlesData(
-            bottomTitles: SideTitles(
-              showTitles: true,
-              reservedSize: 22,
-              textStyle: TextStyle(
-                color: const Color(0xff72719b),
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-              margin: 10,
-              getTitles: (value) {
-                var yearSeperation = 1.0;
-                if (years.last - years.first > 25) {
-                  yearSeperation = 10.0;
-                } else if (years.last - years.first > 10) {
-                  yearSeperation = 5.0;
-                } else {
-                  yearSeperation = 1.0;
-                }
-                return (value.toInt() % yearSeperation) == 0
-                    ? value.toInt().toString()
-                    : "";
-              },
-            ),
-            leftTitles: SideTitles(
-              showTitles: false,
-              textStyle: TextStyle(
-                color: Color(0xff75729e),
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-              ),
-              getTitles: (value) {
-                var text = '';
-                text = (value.roundToDouble().toInt() % 5.0) == 0
-                    ? value.roundToDouble().toInt().toString()
-                    : "";
-
-                if (markedZero && value.toInt() == 0) {
-                  text = '';
-                }
-                if (value.toInt() == 0) {
-                  markedZero = true;
-                }
-                return text;
-              },
-              margin: 8,
-              reservedSize: 30,
-            ),
-          ),
-          borderData: FlBorderData(
-              show: true,
-              border: Border(
-                bottom: BorderSide(
-                  color: Color(0xff4e4965),
-                  width: 4,
-                ),
-                left: BorderSide(
-                  color: Colors.transparent,
-                ),
-                right: BorderSide(
-                  color: Colors.transparent,
-                ),
-                top: BorderSide(
-                  color: Colors.transparent,
-                ),
-              )),
-          minX: years.first.toDouble(),
-          maxX: years.last.toDouble(),
-          maxY: Collection(teamRatings).max() > Collection(avgRatings).max()
-              ? Collection(teamRatings).max() + 1
-              : Collection(avgRatings).max() + 1,
-          minY: Collection(teamRatings).min() < Collection(avgRatings).min()
-              ? Collection(teamRatings).min() - 1
-              : Collection(avgRatings).min() - 1,
-          lineBarsData: [
-            LineChartBarData(
-              spots: teamRatings
-                  .asMap()
-                  .map((index, value) => MapEntry(
-                      index, FlSpot((this.years[index]).toDouble(), value)))
-                  .values
-                  .toList(),
-              isCurved: true,
-              colors: [
-                teamColor,
-              ],
-              barWidth: 2,
-              isStrokeCapRound: true,
-              dotData: FlDotData(
-                show: false,
-              ),
-              belowBarData: BelowBarData(
-                show: false,
-              ),
-            ),
-            LineChartBarData(
-              spots: avgRatings
-                  .asMap()
-                  .map((index, value) => MapEntry(
-                      index, FlSpot((this.years[index]).toDouble(), value)))
-                  .values
-                  .toList(),
-              isCurved: true,
-              colors: [
-                Colors.black,
-              ],
-              barWidth: 1,
-              isStrokeCapRound: true,
-              dotData: FlDotData(
-                show: false,
-              ),
-              belowBarData: BelowBarData(
-                show: false,
-              ),
-            ),
-          ],
+    return LineChart(
+      LineChartData(
+        lineTouchData: LineTouchData(
+            enabled: true,
+            touchTooltipData: LineTouchTooltipData(
+                tooltipBgColor: Colors.white.withOpacity(1.0),
+                getTooltipItems: (List<LineBarSpot> touchedSpots) {
+                  var toolTipItems =
+                      touchedSpots.map((LineBarSpot touchedLineSpot) {
+                    if (touchedSpots == null || touchedLineSpot == null) {
+                      return null;
+                    }
+                    var teamName = team.abbreviation ?? team.school;
+                    String text =
+                        "${touchedLineSpot.bar.colors.any((c) => c == teamColor) ? teamName : "Avg."} ${touchedLineSpot.y.toStringAsFixed(2)}";
+                    if (touchedSpots.first == touchedLineSpot) {
+                      text = "${touchedLineSpot.x.toInt().toString()}\n$text";
+                    }
+                    final TextStyle textStyle = TextStyle(
+                      color: touchedLineSpot.bar.colors.first,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    );
+                    return LineTooltipItem(text, textStyle);
+                  }).toList();
+                  return toolTipItems;
+                })),
+        gridData: FlGridData(
+          show: false,
         ),
+        titlesData: FlTitlesData(
+          bottomTitles: SideTitles(
+            showTitles: true,
+            reservedSize: 22,
+            textStyle: TextStyle(
+              color: const Color(0xff72719b),
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+            margin: 10,
+            getTitles: (value) {
+              var yearSeperation = 1.0;
+              if (years.last - years.first > 25) {
+                yearSeperation = 10.0;
+              } else if (years.last - years.first > 10) {
+                yearSeperation = 5.0;
+              } else {
+                yearSeperation = 1.0;
+              }
+              return (value.toInt() % yearSeperation) == 0
+                  ? value.toInt().toString()
+                  : "";
+            },
+          ),
+          leftTitles: SideTitles(
+            showTitles: false,
+            textStyle: TextStyle(
+              color: Color(0xff75729e),
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
+            getTitles: (value) {
+              var text = '';
+              text = (value.roundToDouble().toInt() % 5.0) == 0
+                  ? value.roundToDouble().toInt().toString()
+                  : "";
+
+              if (markedZero && value.toInt() == 0) {
+                text = '';
+              }
+              if (value.toInt() == 0) {
+                markedZero = true;
+              }
+              return text;
+            },
+            margin: 8,
+            reservedSize: 30,
+          ),
+        ),
+        borderData: FlBorderData(
+            show: true,
+            border: Border(
+              bottom: BorderSide(
+                color: Color(0xff4e4965),
+                width: 4,
+              ),
+              left: BorderSide(
+                color: Colors.transparent,
+              ),
+              right: BorderSide(
+                color: Colors.transparent,
+              ),
+              top: BorderSide(
+                color: Colors.transparent,
+              ),
+            )),
+        minX: years.first.toDouble(),
+        maxX: years.last.toDouble(),
+        maxY: Collection(teamRatings).max() > Collection(avgRatings).max()
+            ? Collection(teamRatings).max() + 1
+            : Collection(avgRatings).max() + 1,
+        minY: Collection(teamRatings).min() < Collection(avgRatings).min()
+            ? Collection(teamRatings).min() - 1
+            : Collection(avgRatings).min() - 1,
+        lineBarsData: [
+          LineChartBarData(
+            show: true,
+            belowBarData: BarAreaData(
+              show: false,
+            ),
+            spots: teamRatings
+                .where((x) => x != null)
+                .toList()
+                .asMap()
+                .map((index, value) => MapEntry(
+                    index, FlSpot((this.years[index]).toDouble(), value ?? 0)))
+                .values
+                .toList(),
+            isCurved: false,
+            colors: [
+              teamColor,
+            ],
+            barWidth: 2,
+            isStrokeCapRound: true,
+            dotData: FlDotData(
+              show: false,
+            ),
+          ),
+          LineChartBarData(
+            show: true,
+            spots: avgRatings
+                .where((x) => x != null)
+                .toList()
+                .asMap()
+                .map((index, value) => MapEntry(
+                    index, FlSpot((this.years[index]).toDouble(), value ?? 0)))
+                .values
+                .toList(),
+            isCurved: false,
+            colors: [
+              Colors.black,
+            ],
+            barWidth: 2,
+            isStrokeCapRound: true,
+            dotData: FlDotData(
+              show: true,
+            ),
+          ),
+        ],
       ),
     );
   }

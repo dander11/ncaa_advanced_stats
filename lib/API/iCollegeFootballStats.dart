@@ -1,9 +1,4 @@
-import 'package:ncaa_stats/Models/game.dart';
-import 'package:ncaa_stats/Models/gameFilter.dart';
-import 'package:ncaa_stats/Models/gameStats.dart';
-import 'package:ncaa_stats/Models/player.dart';
-import 'package:ncaa_stats/Models/spRatings.dart';
-import 'package:ncaa_stats/Models/team.dart';
+import '../Models/Models\.dart';
 
 abstract class ICollegeFootballStats {
   Future<List<Team>> getTeams();
